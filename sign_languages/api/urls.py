@@ -2,7 +2,8 @@ from . import views
 
 
 from django.urls import path
-from .views import PasswordResetRequestAPIView, PasswordResetConfirmAPIView
+# from .views import  PasswordResetConfirmAPIView, PasswordResetRequestAPIView
+from .views import PasswordResetRequestAPIView,  ConfirmationAPIView
 
 # from .views import RegisterView 
 
@@ -17,7 +18,8 @@ urlpatterns = [
     # path('password-reset/confirm/<str:uidb64>/<str:token>/', PasswordResetConfirmAPIView.as_view(), name='password_reset_confirm_api'),
     
     
-    path('password-reset/confirm/', PasswordResetConfirmAPIView.as_view(), name='password_reset_confirm_api'),
+    # path('password-reset/confirm/', PasswordResetConfirmAPIView.as_view(), name='password_reset_confirm_api'),
+    path('password-reset/confirm/', ConfirmationAPIView.as_view(), name='password_reset_confirm_api'),
 
     # path('login/', views.CustomObtainAuthToken.as_view(), name='login'),
 

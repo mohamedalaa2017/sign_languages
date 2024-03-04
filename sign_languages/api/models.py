@@ -36,14 +36,22 @@ class CustomUserManager(BaseUserManager):
 
         return user
 
+
+
+
 class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
+    verification_code = models.PositiveIntegerField(blank=True, null=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]
 
+
     objects = CustomUserManager()
+
+
+
 
 
 
