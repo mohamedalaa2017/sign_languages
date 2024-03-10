@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 
 from pathlib import Path
-
+import os 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -46,6 +46,13 @@ INSTALLED_APPS = [
     # 'phonenumber_field',
 
 
+    # ...
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
+    # ...
+
     'api',
     "django.contrib.admin",
     "django.contrib.auth",
@@ -53,19 +60,44 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+
+
 ]
 AUTHENTICATION_BACKENDS = ['api.auth_backends.EmailBackend', 'django.contrib.auth.backends.ModelBackend']
 AUTH_USER_MODEL = 'api.CustomUser'
 
+
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'APP': {
+            'client_id': 'your_google_client_id',
+            'secret': 'your_google_client_secret',
+            'key': '',
+        }
+    }
+}
+
 REST_FRAMEWORK = {
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+        'rest_framework.parsers.MultiPartParser',  # for file uploads
+    ),
+
     'DEFAULT_AUTHENTICATION_CLASSES': [
+        'allauth.account.auth_backends.AuthenticationBackend',
         'rest_framework.authentication.TokenAuthentication',
+        
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
     ],
 }
 
+AUTHENTICATION_CLASSES = [
+    # ...
+    'allauth.account.auth_backends.AuthenticationBackend',
+    # ...
+]
 
 
 
@@ -81,6 +113,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 
+    'allauth.account.middleware.AccountMiddleware',
     
 
 ]
@@ -161,3 +194,8 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+###### media #####
+MEDIA_ROOT  = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

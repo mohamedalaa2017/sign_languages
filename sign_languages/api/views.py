@@ -8,16 +8,24 @@ from rest_framework.permissions import AllowAny
 
 from .serializers import UserRegistrationSerializer
 from django.contrib.auth import get_user_model
+from .models import CustomUser
 
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.generics import CreateAPIView
+from rest_framework import generics
+from rest_framework.parsers import MultiPartParser, FormParser
+
 from django.contrib.auth.models import User
 from .serializers import PasswordResetRequestSerializer, PasswordResetSerializer
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_bytes, force_str
 from django.utils.http import urlsafe_base64_encode
 from django.utils.http import urlsafe_base64_decode
+
+from .serializers import CustomUserSerializer, CustomUserUpdateSerializer
+from rest_framework.permissions import IsAuthenticated
+
 
 from django.core.mail import send_mail
 from django.urls import reverse
@@ -266,3 +274,30 @@ class ConfirmationAPIView(CreateAPIView):
 #         user.save()
 
 
+from rest_framework.exceptions import AuthenticationFailed
+
+class CustomUserDetailView(generics.RetrieveAPIView):
+    serializer_class = CustomUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, AuthenticationFailed):
+            return Response({"error": str(exc)}, status=status.HTTP_401_UNAUTHORIZED)
+        return super().handle_exception(exc)
+
+
+class CustomUserUpdateView(generics.UpdateAPIView):
+    serializer_class = CustomUserUpdateSerializer
+    parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+    
+    def handle_exception(self, exc):
+        if isinstance(exc, AuthenticationFailed):
+            return Response({"error": str(exc)}, status=status.HTTP_401_UNAUTHORIZED)
+        return super().handle_exception(exc)

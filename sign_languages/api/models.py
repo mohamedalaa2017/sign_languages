@@ -4,6 +4,8 @@ from django.dispatch import receiver
 from django.conf import settings
 from django.contrib.auth.models import User, AbstractUser
 from rest_framework.authtoken.models import Token 
+from django.core.validators import FileExtensionValidator
+
 # Create your models here.
 
 
@@ -43,6 +45,7 @@ class CustomUser(AbstractUser):
     username = None
     email = models.EmailField(unique=True)
     verification_code = models.PositiveIntegerField(blank=True, null=True)
+    profile_image = models.ImageField(upload_to='profile_images/', null=True, blank=True)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ["first_name", "last_name"]
